@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="HTML, CSS, Your Mum, Huh, JJ, ESP32-CAM" />
+    <meta name="description" content="This is JJ playing with an ESP32-CAM" />
+    <title>Short story pleath</title>
+    <style>
+      a {
+        color: rgba(255, 255, 255, 0.1);
+      }
+      body {
+        background-size: cover;
+        background-color: 	#ffffff;
+        color: rgb(0, 0, 0);
+      }
+      H2 {
+        font-weight: bold;
+        font-size: XX-large;
+      }
+      p {
+        font-size: normal;
+      }
+      em {
+        font-style: normal;
+        font-weight: bolder;
+        color: rebeccapurple;
+      }
+      xtratext {
+        color: hotpink;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Photo Upload test</h1>
+    <!-- Der bør KUN være 1 H1 - dette er for search engines-->
+    <button type="button" id="myButton">Go to log!</button>
+    
+    <form action="/postimg" method="post" enctype="multipart/form-data">
+      Select image to upload:
+      <input type="file" name="imageFile" id="filex">
+      <input type="submit" value="Upload Image" name="submit">
+    </form>
+  </body>
+</html>
+
+<script type="text/javascript">
+  document.getElementById("myButton").onclick = function () {
+      location.href = "http://localhost:8080/viewtemeprature";
+  };
+
+</script>

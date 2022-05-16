@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="keywords" content="HTML, CSS, Your Mum, Huh, JJ, ESP32-CAM" />
+    <meta name="description" content="This is JJ playing with an ESP32-CAM" />
+    <title>Short story pleath</title>
+    <style>
+      a {
+        color: rgba(255, 255, 255, 0.1);
+      }
+      body {
+        background-size: cover;
+        background-color: 	#ffffff;
+        color: rgb(0, 0, 0);
+      }
+      H2 {
+        font-weight: bold;
+        font-size: XX-large;
+      }
+      p {
+        font-size: normal;
+      }
+      em {
+        font-style: normal;
+        font-weight: bolder;
+        color: rebeccapurple;
+      }
+      xtratext {
+        color: hotpink;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Update test setup:</h1>
+    <form action="http://192.168.8.211:8080/update" method="post" enctype="application/x-www-form-urlencoded">
+        <label for="depth">Depth:</label>
+        <input type="text" name ="depth" id = "depth"><br>
+        <label for="temp">Temperature:</label>
+        <input type="text" name ="temp" id = "temp"><br>
+        <label for="lux">Lux:</label>
+        <input type="text" name ="lux" id = "lux"> <br>
+        <label for="uph">Update per hour:</label>
+        <input type="text" name ="uph" id = "uph"> <br>
+      <input type="submit" value="Start test" name="submit">
+    </form>
+  </body>
+</html>
