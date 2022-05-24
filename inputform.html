@@ -36,7 +36,7 @@
   </head>
   <body>
     <h1>Update test setup:</h1>
-    <form action="http://192.168.8.211:8080/update" method="post" enctype="application/x-www-form-urlencoded">
+    <form action="http://192.168.8.211:80/update" method="get" enctype="application/x-www-form-urlencoded">
         <label for="depth">Depth:</label>
         <input type="text" name ="depth" id = "depth"><br>
         <label for="temp">Temperature:</label>
@@ -45,6 +45,8 @@
         <input type="text" name ="lux" id = "lux"> <br>
         <label for="uph">Update per hour:</label>
         <input type="text" name ="uph" id = "uph"> <br>
+        <label for="tablename">Tablename:</label>
+        <input type="text" name ="tablename" id = "tablename"> <br>
       <input type="submit" value="Start test" name="submit">
     </form>
   </body>

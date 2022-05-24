@@ -1,4 +1,3 @@
-#!C:/Users/rdybs/AppData/Local/Programs/Python/Python310 python3
 
 ##
 # @mainpage HTTP request handler for plant test chamber
@@ -66,7 +65,7 @@ class testChamberServer(BaseHTTPRequestHandler):
 
     def respond(self, response=200):
         """        
-        Respond is a short function, as to create a response to the request
+        Respond is a function, as to create a response to the request
         By default, it will respond with a 200, meaning "OK".
         If it senses a request for a .html document, it wil open that file and respond with the lines.
 
@@ -94,7 +93,13 @@ class testChamberServer(BaseHTTPRequestHandler):
             self.wfile.flush()
 
     def redirect(self, destination):
-        url = 'http://'+self.address_string() + ':' + str(serverPort)+destination
+        """redirect implements the functionality to redirect a request to another localtion within the server,
+        utilising the HTTP 301 response.
+
+        Args:
+            destination (string): destination is the string containing the path that is redirected to.
+        """
+        url = 'http://192.168.8.210:'+str(serverPort)+destination
         print("Redirecting to: "+url)
         self.send_response(301)
         self.send_header('Location', url)
@@ -102,7 +107,7 @@ class testChamberServer(BaseHTTPRequestHandler):
         self.flush_headers()
 
     def do_HEAD(self):
-        """! do_HEAD reponds to HEAD request with a simple header.
+        """ do_HEAD reponds to HEAD request with a simple header.
         """
         self.respond(200)
 
@@ -122,6 +127,9 @@ class testChamberServer(BaseHTTPRequestHandler):
     # Handles postrequests - responds with an error if it is an invalid target
 
     def do_POST(self):
+        """do_POST handles all POST requests. Primarily, it looks for the correct path, and calls the method resposible of that path.
+        """
+        print(str(self.headers))
         if self.path.startswith('/post'):
             print("Looking for path "+str(self.path))
             self.uploadData()
@@ -137,13 +145,13 @@ class testChamberServer(BaseHTTPRequestHandler):
                 self.path).encode('utf-8'))
 
     def do_GET(self):
-        ##
-        #Is this how u document better? IDK
-        
-        # Redirects /pictest to /picturetest.html
+        """do_GET handles all GET requests. Primarily, it looks for the correct path, and calls the method resposible of that path.
+            If no path is found it reponds with a HTTP 404 reponse.
+        """
         print("Looking for path "+str(self.path))
-        
+        print(str(self.headers))  
 
+        """!
         #Dette er ikke nødvendigt for koden, men er en spændende måde at afkode requesten, uden at få brug for CGI form metoden.
         length = self.headers.get('Content-Length')
         print("Content-length is "+str(length))
@@ -163,6 +171,7 @@ class testChamberServer(BaseHTTPRequestHandler):
             for i in range(0, len(keylist)):
                 print("Element["+str(i)+"] - Key: "+str(keylist[i]+", value: "+str(valuelist[i])))
         #Junk slut
+        """
 
         if self.path == '/pictest':
             self.redirect('/picturetest.html')
@@ -174,7 +183,7 @@ class testChamberServer(BaseHTTPRequestHandler):
         elif self.path.startswith('/printtable'):
             self.printTable()
         elif self.path == '/delete':
-            self.redirect('/deletepage_laptop.html')
+            self.redirect('/deletepage.html')
         elif self.path == '/':
             self.tableoverview()
         elif self.path.endswith('.html'):
@@ -242,14 +251,21 @@ class testChamberServer(BaseHTTPRequestHandler):
         for element in data:
             self.wfile.write(bytes(' document.getElementById("' +
                              str(element)+'").onclick = function() {\n', "utf-8"))
-            self.wfile.write(bytes('    location.href = "http://localhost:' +
+            self.wfile.write(bytes('    location.href = "http://192.168.8.210:' +
                              str(serverPort)+'/printtable/?'+str(element)+'";\n', "utf-8"))
             self.wfile.write(bytes(' };\n', "utf-8"))
 
         self.wfile.write(bytes(
             ' document.getElementById("deletepage").onclick = function() {\n', "utf-8"))
         self.wfile.write(bytes(
-            '    location.href = "http://localhost:'+str(serverPort)+'/delete";\n', "utf-8"))
+            '    location.href = "http://192.168.8.210:'+str(serverPort)+'/delete";\n', "utf-8"))
+        self.wfile.write(bytes(' };\n', "utf-8"))
+        self.wfile.write(bytes('</script>', "utf-8"))
+        
+        self.wfile.write(bytes(
+            ' document.getElementById("Update test").onclick = function() {\n', "utf-8"))
+        self.wfile.write(bytes(
+            '    location.href = "http://192.168.8.210:'+str(serverPort)+'/update";\n', "utf-8"))
         self.wfile.write(bytes(' };\n', "utf-8"))
         self.wfile.write(bytes('</script>', "utf-8"))
 
@@ -281,9 +297,11 @@ class testChamberServer(BaseHTTPRequestHandler):
         tablename = form.getvalue('tablename')
         columnList = mydb.getColoums(tablename)
         key = form.keys()
+        print("Keys: "+str(key))
+        print("Columns: "+str(columnList))
         for column in columnList:
             for keys in key:
-                if str(keys).lower() == column:
+                if str(keys).lower() == str(column).lower():
                     datalist.append(form.getvalue(str(keys)))
 
         # Prints the data recieved from the keys
@@ -313,8 +331,6 @@ class testChamberServer(BaseHTTPRequestHandler):
         Raises:
             Exception: If the filepath doesn't exsist,  
 
-        Returns:
-            _type_: _description_
         """
         print("Img recieved!")
         now = datetime.now()
@@ -328,7 +344,11 @@ class testChamberServer(BaseHTTPRequestHandler):
             if os.path.exists(filename):
                 raise Exception("Filename exists")
 
-            self.saveToFile(filename, form)
+            invform = []
+            for i in (len(form)):
+                invform[len(form)-i] = form[i]
+
+            self.saveToFile(filename, invform)
 
             mydb.logImage(TABLENAME='imagelog', FILENAME=filename)
             self.respond(200)
@@ -341,7 +361,6 @@ class testChamberServer(BaseHTTPRequestHandler):
             self.respond(409)
             reply_body = '"%s" already exists\n' % filename
             self.wfile.write(reply_body.encode('utf-8'))
-        return self  # Nødvendig??
 
     def deleteTable(self):
         print("CORRECT STRING!")
